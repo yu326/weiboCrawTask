@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--
+  ~
+  ~ Copyright (c) 2017, inter3i.com. All rights reserved.
+  ~ All rights reserved.
+  ~
+  ~ Author: Administrator
+  ~ Created: 2017/04/12
+  ~ Description:
+  ~
+  -->
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yu.test.dao.TaskDao">
+
+    <!-- 查询用户的area_code  1 -->
+    <select id="findById" resultType="java.util.Map">
+		SELECT id FROM project limit 1
+	</select>
+
+
+    <!--&lt;!&ndash; 查询用户的area_code  2 &ndash;&gt;-->
+    <!--<select id="getUserDirectCode" resultType="Map">-->
+    <!--select a.country,a.province,a.city,a.district from area a where a.area_code = #{area_code} order by a.area_code limit 1-->
+    <!--</select>-->
+
+    <!--<select id="getSourceId" parameterType="java.util.Map"   resultType="java.util.Map">-->
+    <!--SELECT sourceid FROM sourceurl  WHERE sourceurl.source = #{source}-->
+    <!--</select>-->
+
+
+</mapper>
