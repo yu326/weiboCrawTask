@@ -65,5 +65,6 @@
 
     <bean id="BloomFilterServiceImpl" class="com.yu.test.service.impl.BloomFilterServiceImpl"/>
     <bean id="FilterAdapter" class="com.yu.test.job.FilterAdapter"/>
+    <bean id="showUser" class="com.yu.test.job.Statuses"/>
 
 </beans>
