@@ -169,6 +169,14 @@
             <artifactId>spring-data-mongodb</artifactId>
             <version>1.10.7.RELEASE</version>
         </dependency>
+        <!-- https://mvnrepository.com/artifact/org.springframework/spring-jdbc -->
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-jdbc</artifactId>
+            <version>${spring.version}</version>
+        </dependency>
+
+
 
 
     </dependencies>

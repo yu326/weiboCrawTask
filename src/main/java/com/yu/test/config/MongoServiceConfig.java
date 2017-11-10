@@ -4,10 +4,7 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PropertiesLoaderUtils;
 
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Properties;
+import java.util.*;
 
 
 /**
@@ -73,6 +70,11 @@ public class MongoServiceConfig {
         int end = key.length();
         String rs = key.substring(start, end);
         return rs;
+    }
+
+
+    public static class projectCache{
+        private static List<String> projectCache = new ArrayList<String>(4);
     }
 
 }

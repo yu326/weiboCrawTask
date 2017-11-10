@@ -3,10 +3,9 @@ package com.yu.test.test;
 import com.mongodb.*;
 
 import java.net.UnknownHostException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 /**
  * Created by koreyoshi on 2017/11/3.
@@ -39,8 +38,7 @@ public class Test {
         list.add("yu2");
         list.add("yu3");
         Map testData = new HashMap();
-        testData.put("test",list);
-
+        testData.put("test", list);
 
 
         DBObject dbObject = new BasicDBObject(testData);
@@ -64,5 +62,38 @@ public class Test {
 //            e.printStackTrace();
 //        }
 
+    }
+
+    /**
+     * 中国标准时间转化成时间戳
+     *
+     * @throws ParseException
+     */
+    @org.junit.Test
+    public void testTime() throws ParseException {
+        String dt = "Thu May 28 18:23:17 CST 2015";
+
+        SimpleDateFormat sdf1 = new SimpleDateFormat("EEE MMM dd HH:mm:ss z yyyy", Locale.ENGLISH);
+
+        SimpleDateFormat sdf2 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        String dateTimeString = sdf2.format(sdf1.parse(dt));
+        System.out.println(dateTimeString);
+        Long time = sdf2.parse(dateTimeString).getTime();
+        System.out.println(time);
+    }
+
+    @org.junit.Test
+    public void test1(){
+        String docText = "<a href=\"http://app.weibo.com/t/feed/3zgJda\" rel=\"nofollow\">前后2000万 OPPO R11s</a>";
+        String repDocText = docText.replaceAll("<a.*?>|</a>", "");
+        System.out.println(docText);
+        System.out.println(repDocText);
+    }
+
+    @org.junit.Test
+    public void test2(){
+        String key = "storedata.dsname.cache04";
+        int start = key.indexOf(".", 1);
+        System.out.println(start);
     }
 }

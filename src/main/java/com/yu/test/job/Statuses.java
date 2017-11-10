@@ -1,14 +1,18 @@
 package com.yu.test.job;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import com.mongodb.DBCollection;
 import com.yu.test.sdk.Users;
 import com.yu.test.sdk.model.WeiboException;
+import com.yu.test.util.HttpUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.util.StringUtils;
 
 import java.util.*;
+
+import static com.yu.test.util.HandleDataHelper.handleData2Mongo;
+import static com.yu.test.util.HttpUtils.CONTENT_TYPE_TEXT_XML;
 
 /**
  * Created by koreyoshi on 2017/11/9.
@@ -16,18 +20,9 @@ import java.util.*;
 @Slf4j
 public class Statuses {
 
-    //需要入库到mongo中的字段
-    // TODO: 2017/11/9  标注 level字段，是处理得到的，我需要确认逻辑。user_city_code城市吗，还有省包括区码，都是计算得到的。这个工作暂时不做，只存其location字段，类似“广东 广州”。page_url 需要处理得到。
-
-    private final String[] SEND_TOMONGO_TEXT_FIELDS = {"location", "text", "reposts_count", "comments_count", "attitudes_count", "verify", "verified_type", "verified_reason", "created_at", "favorited", "id", "father_id", "original_url", "followers_count"};
-
-    private final String[] SEND_TOMONGO_TEXT_FIELDS_MAPPING = {"location", "text", "reposts_count", "comments_count", "praises_count", "verify", "verified_type", "verified_reason", "created_at", "isFavorite", "id", "father_id", "original_url", "followers_count"};
-
-    private final String[] SEND_TOMONGO_USER_FIELDS = {"screen_name", "description", "gender"};
-    private final String[] SEND_TOMONGO_USER_FIELDS_MAPPING = {"user_screen_name", "users_description", "sex"};
 
 
-    public boolean showUser(String uid, String access_token, DBCollection collection) {
+    public boolean getWeiboListByUserId(String uid, String access_token) {
         Users um = new Users(access_token);
         List sendMongoData = new ArrayList();
         try {
@@ -46,31 +41,28 @@ public class Statuses {
                 Map<String, Object> sendData = handleData2Mongo(oneData);
                 sendMongoData.add(sendData);
             }
+
+
+            Map<String, Object> sendDataMap = new HashMap<String, Object>(5);
+            sendDataMap.put("currentHost", "192.168.0.165");
+            sendDataMap.put("currentPort", "8081");
+            sendDataMap.put("page_url", "xxx");
+            sendDataMap.put("dictPlan", "[[]]");
+            sendDataMap.put("datas", sendMongoData);
+
+            String sendDataString = JSON.toJSONString(sendDataMap);
+            String charset = "utf8";
+            String content_type = CONTENT_TYPE_TEXT_XML;
+            String requstUrl = "http://192.168.0.241:7080/otaapi/DataClean/cleandoc?type=insert&cacheServerName=cache01&isWeibo=true";
+            HttpUtils.executePost(sendDataString, charset, requstUrl, 3000 * 1000, content_type);
+
         } catch (WeiboException e) {
             e.printStackTrace();
         }
         return true;
     }
 
-    public Map handleData2Mongo(JSONObject data) {
-        Map<String, Object> sendData = new HashMap<String, Object>();
 
-        //处理文本中的字段
-        for (int i = 0; i < SEND_TOMONGO_TEXT_FIELDS.length; i++) {
-            if (data.containsKey(SEND_TOMONGO_TEXT_FIELDS[i]) && !StringUtils.isEmpty(data.get(SEND_TOMONGO_TEXT_FIELDS[i]))) {
-                sendData.put(SEND_TOMONGO_TEXT_FIELDS_MAPPING[i], data.get(SEND_TOMONGO_TEXT_FIELDS[i]));
-            }
-        }
-        if (data.containsKey("user")) {
-            for (int i = 0; i < SEND_TOMONGO_USER_FIELDS.length; i++) {
-                if (data.containsKey(SEND_TOMONGO_USER_FIELDS[i]) && !StringUtils.isEmpty(data.get(SEND_TOMONGO_USER_FIELDS[i]))) {
-                    sendData.put(SEND_TOMONGO_USER_FIELDS_MAPPING[i], data.get(SEND_TOMONGO_USER_FIELDS[i]));
-                }
-            }
-        }
 
-        //处理用户对象中的字段
 
-        return sendData;
-    }
 }
