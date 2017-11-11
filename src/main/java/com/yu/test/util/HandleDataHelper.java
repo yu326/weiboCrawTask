@@ -1,10 +1,14 @@
 package com.yu.test.util;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.yu.test.config.MongoServiceConfig;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
+import static com.yu.test.util.HttpUtils.CONTENT_TYPE_TEXT_XML;
 import static com.yu.test.util.TimeConvertUtils.chineseStandardTimeToLong;
 import static com.yu.test.util.WeiboId2MidUtil.Mid2Uid;
 
@@ -29,7 +33,7 @@ public class HandleDataHelper {
     private static final String PAGE_URL_PREFIX = "http://weibo.com";
 
 
-    public static Map handleData2Mongo(JSONObject data) {
+    public static Map handleData2Mongo(JSONObject data, Map paramMap) {
         Map<String, Object> sendData = new HashMap<String, Object>();
 
         //处理文本中的字段
@@ -78,19 +82,40 @@ public class HandleDataHelper {
             long longTime = chineseStandardTimeToLong(data.getString("created_at"));
             sendData.put("created_at", longTime);
         }
-        // TODO: 2017/11/10设置source
+        //过滤<a></a>标签中的source
         if (data.containsKey("source")) {
             String repDocText = data.getString("source").replaceAll("<a.*?>|</a>", "");
             sendData.put("source", repDocText);
         }
-        // TODO: 2017/11/10 column，column1配置化。
         //设置column和column1
-        sendData.put("column", "微博");
-        sendData.put("column1", "云计算_微博");
-
-        //处理用户对象中的字段
-
+        sendData.put("column", paramMap.get("column"));
+        sendData.put("column1", paramMap.get("column1"));
         return sendData;
+    }
+
+
+    public static boolean sendWbdataToMongo(List sendMongoData, MongoServiceConfig mongoServiceConfig, int int_cache_name) {
+        Map<String, Object> sendDataMap = new HashMap<String, Object>(5);
+        sendDataMap.put("currentHost", "192.168.0.165");
+        sendDataMap.put("currentPort", "8081");
+        sendDataMap.put("page_url", "xxx");
+        sendDataMap.put("dictPlan", "[[]]");
+        sendDataMap.put("datas", sendMongoData);
+
+        String sendDataString = JSON.toJSONString(sendDataMap);
+        String charset = "utf8";
+        String content_type = CONTENT_TYPE_TEXT_XML;
+        String cache_name;
+        if (int_cache_name == 0) {
+            cache_name = mongoServiceConfig.getOtaCachename();
+        } else {
+            cache_name = "cache" + int_cache_name;
+        }
+//        String requstUrl = "http://192.168.0.241:7080/otaapi/DataClean/cleandoc?type=insert&cacheServerName=cache01&isWeibo=true";
+        String requstUrl = mongoServiceConfig.getOtaUrl() + ":" + mongoServiceConfig.getOtaPort() + mongoServiceConfig.getOtaInterceceName() + mongoServiceConfig.getOtaInterfaceParam() + cache_name;
+        String res = HttpUtils.executePost(sendDataString, charset, requstUrl, 3000 * 1000, content_type);
+        // TODO: 2017/11/11 ota 处理结果
+        return true;
     }
 
 }

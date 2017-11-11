@@ -21,7 +21,7 @@ public class TestController {
     @RequestMapping("index")
     public String test() {
         Map param = new HashMap();
-        Map data = taskMapper.findById();
+        Map data = taskMapper.findById(param);
         System.out.println(data);
         return "index";
     }

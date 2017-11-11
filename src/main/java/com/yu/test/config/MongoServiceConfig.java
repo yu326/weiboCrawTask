@@ -17,7 +17,13 @@ public class MongoServiceConfig {
     private static MongoServiceConfig config;
 
     //redisConfigCacheMap
-    private static Map<String, String> MongoServiceConfig = new HashMap<String, String>(4);
+    private static Map<String, String> MongoServiceConfig = new HashMap<String, String>(5);
+
+    private static String OTA_URL;
+    private static String OTA_PORT;
+    private static String OTA_INTERCECE_NAME;
+    private static String OTA_INTERFACE_PARAM;
+    private static String OTA_CACHENAME;
 
 
     public static void main(String[] args) {
@@ -43,38 +49,38 @@ public class MongoServiceConfig {
             Object data;
             while (it.hasNext()) {
                 key = (String) it.next();
-
-
-
-
-                data = props.get(key);
-                System.out.println(data);
+                if (key.contains("url")) {
+                    OTA_URL = (String) props.get(key);
+                } else if (key.contains("port")) {
+                    OTA_PORT = (String) props.get(key);
+                }else if (key.contains("interceceName")) {
+                    OTA_INTERCECE_NAME = (String) props.get(key);
+                }else if (key.contains("interfaceParam")) {
+                    OTA_INTERFACE_PARAM = (String) props.get(key);
+                }else if (key.contains("cacheName")) {
+                    OTA_CACHENAME = (String) props.get(key);
+                }
             }
+            System.out.println("here is end~~");
         } catch (Exception e) {
             e.printStackTrace();
         }
         return config;
     }
 
-
-    //获取配置文件中的“.”之后的符号，作为redisServiceConfigMap的key值
-    private static String getKeyIn(String key) {
-        int start = key.indexOf(".") + 1;
-        int end = key.lastIndexOf(".");
-        String rs = key.substring(start, end);
-        return rs;
+    public String getOtaUrl(){
+        return OTA_URL;
     }
-
-    public static String getProjectName(String key) {
-        int start = key.lastIndexOf(".") + 1;
-        int end = key.length();
-        String rs = key.substring(start, end);
-        return rs;
+    public String getOtaPort(){
+        return OTA_PORT;
     }
-
-
-    public static class projectCache{
-        private static List<String> projectCache = new ArrayList<String>(4);
+    public String getOtaInterceceName(){
+        return OTA_INTERCECE_NAME;
     }
-
+    public String getOtaInterfaceParam(){
+        return OTA_INTERFACE_PARAM;
+    }
+    public String getOtaCachename(){
+        return OTA_CACHENAME;
+    }
 }

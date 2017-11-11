@@ -7,5 +7,5 @@ import java.util.Map;
  */
 
 public interface TaskDao {
-    Map findById();
+    Map findById(Map taskMapper);
 }

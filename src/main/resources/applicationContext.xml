@@ -63,8 +63,9 @@
 
     <bean class="org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor"/>
 
-    <bean id="BloomFilterServiceImpl" class="com.yu.test.service.impl.BloomFilterServiceImpl"/>
+    <bean id="CrawWbDataService" class="com.yu.test.service.impl.CrawWbDataServiceImpl"/>
     <bean id="FilterAdapter" class="com.yu.test.job.FilterAdapter"/>
     <bean id="showUser" class="com.yu.test.job.Statuses"/>
+
 
 </beans>

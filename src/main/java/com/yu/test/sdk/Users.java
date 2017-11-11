@@ -101,10 +101,10 @@ public class Users extends Weibo {
      * @return
      * @throws WeiboException
 	 */
-	public String getUserWeiboListById(String uid) throws WeiboException {
+	public String getUserWeiboListById(String uid,int count,int page) throws WeiboException {
 		return client.get(
 				WeiboConfig.getValue("baseURL") + "statuses/user_timeline_batch.json",
-				new PostParameter[] { new PostParameter("uids", uid) },
+				new PostParameter[] { new PostParameter("uids", uid),new PostParameter("count", count),new PostParameter("page", page) },
 				access_token).toString();
 	}
 }

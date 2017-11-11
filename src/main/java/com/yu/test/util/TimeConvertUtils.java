@@ -21,13 +21,11 @@ public class TimeConvertUtils {
     public static long chineseStandardTimeToLong(String waitConverTime) {
         long converTime = -1;
         String dateTimeString = chineseStandardTimeToStringDate(waitConverTime);
-
         try {
             converTime = NORMAL_DATE_FORMAT.parse(dateTimeString).getTime();
         } catch (ParseException e) {
             e.printStackTrace();
         }
-        System.out.println(converTime);
         return converTime;
     }
 
