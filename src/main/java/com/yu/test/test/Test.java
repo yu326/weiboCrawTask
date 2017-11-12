@@ -1,6 +1,8 @@
 package com.yu.test.test;
 
 import com.mongodb.*;
+import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.stereotype.Component;
 
 import java.net.UnknownHostException;
 import java.text.ParseException;
@@ -10,6 +12,7 @@ import java.util.*;
 /**
  * Created by koreyoshi on 2017/11/3.
  */
+@Component
 public class Test {
     @org.junit.Test
     public void test() {
@@ -95,5 +98,9 @@ public class Test {
         String key = "storedata.dsname.cache04";
         int start = key.indexOf(".", 1);
         System.out.println(start);
+    }
+    @Scheduled(cron = "0 */1 * * * *")
+    public void test4(){
+        System.out.println("in test4");
     }
 }
