@@ -1,38 +1,38 @@
 package com.yu.test.service.impl;
 
-import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.yu.test.config.MongoServiceConfig;
-import com.yu.test.controller.WeiboController;
 import com.yu.test.dao.TaskDao;
 import com.yu.test.job.Statuses;
+import com.yu.test.job.TaskAdapter;
 import com.yu.test.sdk.Users;
 import com.yu.test.service.CrawWbDataService;
-import com.yu.test.util.HttpUtils;
-import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
-
 import java.util.*;
-
 import static com.yu.test.util.HandleDataHelper.handleData2Mongo;
 import static com.yu.test.util.HandleDataHelper.sendWbdataToMongo;
-import static com.yu.test.util.HttpUtils.CONTENT_TYPE_TEXT_XML;
 
 /**
  * Created by koreyoshi on 2017/11/10.
  */
 public class CrawWbDataServiceImpl implements CrawWbDataService {
 
+    @Autowired
+    private Statuses statuses;
+    @Autowired
+    private TaskDao taskMapper;
+    private MongoServiceConfig mongoServiceConfig = MongoServiceConfig.getConfig();
+
     Logger log = LoggerFactory.getLogger(CrawWbDataServiceImpl.class);
 
-    public boolean execture(TaskDao taskMapper, Statuses statuses, MongoServiceConfig mongoServiceConfig) {
+    public boolean execture() {
 
         try {
             Map paramMap = getWbTask(taskMapper);
-
             if (paramMap == null) {
                 log.error("error : In mysql result:[ the field [ select result ]  in null ]");
                 throw new RuntimeException("error : In mysql result:[ the select result in null ]");
@@ -71,8 +71,7 @@ public class CrawWbDataServiceImpl implements CrawWbDataService {
                     String StringUid = (String) uid;
                     String response = statuses.getWeiboListByUserId(taskParam, um, StringUid);
                     if (StringUtils.isEmpty(response)) {
-                        log.error("error : request weiboApi response :[ the data is null ]");
-                        throw new RuntimeException("the data is null");
+                        log.error("error : request weiboApi response is null. userID :[" + uid + "]");
                     }
                     JSONObject data = JSONObject.parseObject(response);
                     JSONArray datas = (JSONArray) data.get("statuses");
@@ -88,8 +87,7 @@ public class CrawWbDataServiceImpl implements CrawWbDataService {
                     }
                     sendMongoData.clear();
                 }
-                // TODO: 2017/11/12 完成任务
-
+                TaskAdapter.normalTask(Integer.valueOf(paramMap.get("id").toString()), taskMapper);
             } else if (taskType == 17) {
                 // TODO: 2017/11/11 抓取关键词
             } else {
@@ -97,12 +95,11 @@ public class CrawWbDataServiceImpl implements CrawWbDataService {
                 throw new RuntimeException("error : In mysql result:[ the field [ task ]  in null ]");
             }
         } catch (Exception e) {
-            // TODO: 2017/11/11 调用异常，更改任务状态
             log.error(e.getMessage());
+            return false;
         } finally {
             return true;
         }
-
     }
 
     public Map getWbTask(TaskDao taskMapper) {

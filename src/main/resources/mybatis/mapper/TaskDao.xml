@@ -13,7 +13,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.yu.test.dao.TaskDao">
 
-    <!-- 查询用户的area_code  1 -->
+    <!-- 查询抓取微博的任务-->
     <select id="findById" parameterType="java.util.Map" resultType="java.util.HashMap">
         SELECT t.id,t.taskparams,t.task ,p.`column`, p.column1, p.access_token FROM task t INNER JOIN project p WHERE
         t.project_id =
@@ -26,6 +26,16 @@
         </if>
         AND t.task in (18,15) AND p.is_avaliable = 1 AND t.taskstatus = 0 ORDER BY t.tasklevel DESC ;
     </select>
+
+    <!-- 修改异常任务状态-->
+    <select id="updateExceptionTaskStatus" parameterType="int" resultType="java.util.HashMap">
+        update task set taskstatus = 2 where id =#{id}
+    </select>
+    <!-- 修改正常任务状态-->
+    <select id="updateNormalTaskStatus" parameterType="int" resultType="java.util.HashMap">
+        update task set taskstatus = 1 where id =#{id}
+    </select>
+
 
 
     <!--&lt;!&ndash; 查询用户的area_code  2 &ndash;&gt;-->

@@ -1,5 +1,6 @@
 package com.yu.test.controller;
 
+import com.alibaba.fastjson.JSONObject;
 import com.yu.test.config.MongoServiceConfig;
 import com.yu.test.dao.TaskDao;
 import com.yu.test.job.Statuses;
@@ -18,6 +19,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.net.UnknownHostException;
 import java.text.ParseException;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Created by koreyoshi on 2017/11/9.
@@ -26,50 +29,28 @@ import java.text.ParseException;
 @RequestMapping("Weibo-api")
 public class WeiboController {
 
-    @Autowired
-    private Statuses statuses;
+
 
     @Autowired
     private CrawWbDataServiceImpl crawWbDataService;
 
-    @Autowired
-    private TaskDao taskMapper;
-
-
-    private MongoServiceConfig mongoServiceConfig = MongoServiceConfig.getConfig();
 
     Logger log = LoggerFactory.getLogger(WeiboController.class);
 
     /**
      * 抓取数据
      *
-     * @param type        类型
-     * @param projectName 项目名
      * @return 返回执行结果
      */
 
     @RequestMapping(produces = "text/xml;charset=utf8", value = "crawData", method = {RequestMethod.POST})
     public
     @ResponseBody
-    String crawData(@RequestParam("type") int type, @RequestParam("projectName") String projectName) throws UnknownHostException, ParseException {
-
-
-            if (type == 1) {
-                log.info("here is test info");
-                crawWbDataService.execture(taskMapper, statuses, mongoServiceConfig);
-
-
-//            String uid = "2257089810";
-//            String access_token = "2.00SdyOsBnp71ED6984ef87900ZfM2B";
-//            boolean res = statuses.getWeiboListByUserId(uid,access_token);
-
-            } else {
-                //暂不处理
-            }
-
-
-
-        return "index";
+    String crawData() throws UnknownHostException, ParseException {
+        Map<String, Boolean> resMap = new HashMap<String, Boolean>(1);
+        boolean res = crawWbDataService.execture();
+        resMap.put("result", res);
+        return resMap.toString();
     }
 
 }

@@ -25,7 +25,7 @@ public class Statuses {
     private static final Logger logger = LoggerFactory.getLogger(WeiboController.class);
 
     public String getWeiboListByUserId(Map paramMap,Users um,String uid) {
-        int page = 0;
+        int page = 1;
         int each_count = 50;
         if(paramMap.containsKey("page") &&!StringUtils.isEmpty(paramMap.get("page"))){
             page = Integer.valueOf(paramMap.get("page").toString());

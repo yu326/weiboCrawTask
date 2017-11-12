@@ -11,7 +11,7 @@ import java.util.Map;
  */
 public interface CrawWbDataService {
 
-    public boolean execture(TaskDao taskMapper,Statuses statuses,MongoServiceConfig mongoServiceConfig);
+    public boolean execture();
 
     public Map getWbTask(TaskDao taskMapper);
 }

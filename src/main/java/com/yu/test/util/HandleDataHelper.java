@@ -93,7 +93,14 @@ public class HandleDataHelper {
         return sendData;
     }
 
-
+    /**
+     * 发送数据到ota项目然后入库
+     *
+     * @param sendMongoData
+     * @param mongoServiceConfig
+     * @param int_cache_name
+     * @return
+     */
     public static boolean sendWbdataToMongo(List sendMongoData, MongoServiceConfig mongoServiceConfig, int int_cache_name) {
         Map<String, Object> sendDataMap = new HashMap<String, Object>(5);
         sendDataMap.put("currentHost", "192.168.0.165");
