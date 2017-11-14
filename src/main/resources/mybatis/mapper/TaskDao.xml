@@ -15,7 +15,8 @@
 
     <!-- 查询抓取微博的任务-->
     <select id="findById" parameterType="java.util.Map" resultType="java.util.HashMap">
-        SELECT t.id,t.taskparams,t.task ,p.`column`, p.column1, p.access_token FROM task t INNER JOIN project p WHERE
+        SELECT t.id,t.taskparams,t.task ,p.`column`, p.column1, p.access_token,p.cache_name FROM task t INNER JOIN
+        project p WHERE
         t.project_id =
         p.id
         <if test="tasktype !=null ">
@@ -35,7 +36,6 @@
     <select id="updateNormalTaskStatus" parameterType="int" resultType="java.util.HashMap">
         update task set taskstatus = 1 where id =#{id}
     </select>
-
 
 
     <!--&lt;!&ndash; 查询用户的area_code  2 &ndash;&gt;-->

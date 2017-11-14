@@ -71,7 +71,11 @@ public class HandleDataHelper {
             //生成转发中的原创url
             if (original_data.containsKey("mid")) {
                 String pageUrlSuffix = Mid2Uid(original_data.getString("mid"));
-                sendData.put("original_url", PAGE_URL_PREFIX + "/" + original_data.getJSONObject("user").get("id") + "/" + pageUrlSuffix);
+                if(original_data.containsKey("user")){
+                    if(original_data.getJSONObject("user").containsKey("id")){
+                        sendData.put("original_url", PAGE_URL_PREFIX + "/" + original_data.getJSONObject("user").get("id") + "/" + pageUrlSuffix);
+                    }
+                }
             }
             sendData.put("content_type", 1);
         } else {
@@ -101,7 +105,7 @@ public class HandleDataHelper {
      * @param int_cache_name
      * @return
      */
-    public static boolean sendWbdataToMongo(List sendMongoData, MongoServiceConfig mongoServiceConfig, int int_cache_name) {
+    public static String sendWbdataToMongo(List sendMongoData, MongoServiceConfig mongoServiceConfig, int int_cache_name) {
         Map<String, Object> sendDataMap = new HashMap<String, Object>(5);
         sendDataMap.put("currentHost", "192.168.0.165");
         sendDataMap.put("currentPort", "8081");
@@ -116,13 +120,13 @@ public class HandleDataHelper {
         if (int_cache_name == 0) {
             cache_name = mongoServiceConfig.getOtaCachename();
         } else {
-            cache_name = "cache" + int_cache_name;
+            cache_name = "cache0" + int_cache_name;
         }
 //        String requstUrl = "http://192.168.0.241:7080/otaapi/DataClean/cleandoc?type=insert&cacheServerName=cache01&isWeibo=true";
-        String requstUrl = mongoServiceConfig.getOtaUrl() + ":" + mongoServiceConfig.getOtaPort() + mongoServiceConfig.getOtaInterceceName() + mongoServiceConfig.getOtaInterfaceParam() + cache_name;
+        String requstUrl = "http://" + mongoServiceConfig.getOtaUrl() + ":" + mongoServiceConfig.getOtaPort() + mongoServiceConfig.getOtaInterceceName() + mongoServiceConfig.getOtaInterfaceParam() + cache_name;
         String res = HttpUtils.executePost(sendDataString, charset, requstUrl, 3000 * 1000, content_type);
-        // TODO: 2017/11/11 ota 处理结果
-        return true;
+        System.out.println(res);
+        return res;
     }
 
 }

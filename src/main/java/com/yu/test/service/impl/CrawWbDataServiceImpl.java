@@ -11,8 +11,9 @@ import com.yu.test.service.CrawWbDataService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.util.StringUtils;
+
 import java.util.*;
+
 import static com.yu.test.util.HandleDataHelper.handleData2Mongo;
 import static com.yu.test.util.HandleDataHelper.sendWbdataToMongo;
 
@@ -62,30 +63,33 @@ public class CrawWbDataServiceImpl implements CrawWbDataService {
                             }
                         }
                     }
-                    if (taskParam.containsKey("cache_name")) {
-                        cache_name = Integer.parseInt(taskParam.get("cache_name").toString());
+                    if (paramMap.containsKey("cache_name")) {
+                        cache_name = Integer.parseInt(paramMap.get("cache_name").toString());
                     }
                 }
                 List sendMongoData = new ArrayList();
                 for (Object uid : uids) {
                     String StringUid = (String) uid;
                     String response = statuses.getWeiboListByUserId(taskParam, um, StringUid);
-                    if (StringUtils.isEmpty(response)) {
-                        log.error("error : request weiboApi response is null. userID :[" + uid + "]");
-                    }
+
                     JSONObject data = JSONObject.parseObject(response);
                     JSONArray datas = (JSONArray) data.get("statuses");
+                    if (datas.size() == 0) {
+                        log.error("error : request weiboApi response is null. userID :[" + uid + "]");
+                        continue;
+                    }
                     Iterator iterator = datas.iterator();
                     while (iterator.hasNext()) {
                         JSONObject oneData = (JSONObject) iterator.next();
                         Map<String, Object> sendData = handleData2Mongo(oneData, paramMap);
                         sendMongoData.add(sendData);
                     }
-                    boolean res = sendWbdataToMongo(sendMongoData, mongoServiceConfig, cache_name);
-                    if (!res) {
+                    String res = sendWbdataToMongo(sendMongoData, mongoServiceConfig, cache_name);
+                    System.out.println(JSONObject.parseObject(res).get("success"));
+                    if (JSONObject.parseObject(res).get("success").equals("false")) {
                         log.error("the uid [ " + StringUid + " ] send to otaApi is failed");
                     }
-                    sendMongoData.clear();
+                    sendMongoData.removeAll(sendMongoData);
                 }
                 TaskAdapter.normalTask(Integer.valueOf(paramMap.get("id").toString()), taskMapper);
             } else if (taskType == 17) {
@@ -95,6 +99,7 @@ public class CrawWbDataServiceImpl implements CrawWbDataService {
                 throw new RuntimeException("error : In mysql result:[ the field [ task ]  in null ]");
             }
         } catch (Exception e) {
+            e.printStackTrace();
             log.error(e.getMessage());
             return false;
         } finally {

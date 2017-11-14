@@ -14,7 +14,7 @@ http://www.springframework.org/schema/task/spring-task-3.2.xsd ">
         <!--
             这里表示的是每隔五秒执行一次
         -->
-        <task:scheduled ref="taskTest" method="test4" cron="*/5 * * * * ?" />
+        <task:scheduled ref="taskTest" method="test4" cron="0 0 0 * * ?" />
     </task:scheduled-tasks>
 
     <!-- 自动扫描的包名 -->
